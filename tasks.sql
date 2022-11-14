@@ -41,7 +41,7 @@ USE bank_system;
 --FROM temp
 --JOIN account
 --	ON account.id = temp.account_id
---WHERE temp.card_sum != account.balance
+--WHERE temp.card_sum != account.balance;
 
 
 
@@ -115,20 +115,36 @@ USE bank_system;
 ---sixth task
 
 
-WITH temp (card_sum, account_id) AS 
+
+WITH temp (account_sum, client_id) AS 
 	(SELECT SUM(balance),
-		 account_id
-	FROM card
-	GROUP BY  card.account_id)
-SELECT client.name,
-		account.id AS account_id,
-		temp.card_sum AS cards_sum_balance,
-		account.balance AS account_balance,
-		account.balance - temp.card_sum AS balance_difference
+		 client_id
+	FROM account
+	GROUP BY  account.client_id)
+SELECT client.id AS client_id,
+		client.name,
+		--temp.account_sum AS accounts_sum_balance,
+		--(SELECT SUM(card.balance)
+		--FROM card
+		--JOIN account
+		--	ON account.id = card.account_id
+		--JOIN client
+		--	ON client.id = account.client_id
+		--WHERE client.id = temp.client_id
+		--GROUP by client.id) AS cards_sum_balance,
+
+		(temp.account_sum - (SELECT SUM(card.balance)
+		FROM card
+		JOIN account
+			ON account.id = card.account_id
+		JOIN client
+			ON client.id = account.client_id
+		WHERE client.id = temp.client_id
+		GROUP by client.id)) AS available_money
 FROM temp
-JOIN account
-	ON account.id = temp.account_id
-JOIN client
-	ON client.id = account.client_id
---WHERE temp.card_sum != account.balance
+RIGHT JOIN client
+	ON client.id = temp.client_id;
+
+
+
 
