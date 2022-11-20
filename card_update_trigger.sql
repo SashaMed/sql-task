@@ -15,9 +15,9 @@ BEGIN TRY
 		@account_id = INSERTED.account_id       
 	FROM INSERTED
 
-	PRINT @id
-	PRINT @balance
-	PRINT @account_id  		
+	--PRINT @id
+	--PRINT @balance
+	--PRINT @account_id  		
 
 
 	DECLARE  @temp INT, @account_balance INT
@@ -26,7 +26,7 @@ BEGIN TRY
 	FROM account
 	WHERE account.id = @account_id;
 	IF @temp IS NULL
-		THROW 50505, 'no account for this card',1
+		THROW 50505, 'No account for this card.',1
 
 	SELECT @account_balance = account.balance
 	FROM account
@@ -39,10 +39,10 @@ BEGIN TRY
 
 
 	IF @temp IS NULL
-		THROW 50505, 'no cards for this account',1
+		THROW 50505, 'No cards for this account.',1
 
 	IF @balance > @account_balance
-		THROW 50505, 'cards sum balance more than account balance',1
+		THROW 50505, 'Cards sum balance is more than account balance.',1
 
 END TRY
 BEGIN CATCH

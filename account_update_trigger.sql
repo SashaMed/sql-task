@@ -15,9 +15,9 @@ BEGIN TRY
 		@bank_id = INSERTED.bank_id       
 	FROM INSERTED
 
-	PRINT @id
-	PRINT @balance
-	PRINT @bank_id  		
+	--PRINT @id
+	--PRINT @balance
+	--PRINT @bank_id  		
 
 	DECLARE @difference_balance INT, @temp INT
 
@@ -32,17 +32,17 @@ BEGIN TRY
 
 
 	IF @temp IS NULL
-		THROW 50505, 'no cards for this account',1
+		THROW 50505, 'No cards for this account.',1
 
 	IF @balance < @temp
-		THROW 50505, 'balance less than cards sum',1
+		THROW 50505, 'Account balance less than cards sum balance.',1
 
 END TRY
 BEGIN CATCH
     DECLARE @ErrorSeverity INT, @ErrorState INT, @ErrorMessage VARCHAR(100); 
     SELECT @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE(), @ErrorMessage = ERROR_MESSAGE(); 
-    ROLLBACK TRANSACTION; 
     RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
+	ROLLBACK TRANSACTION; 
 END CATCH
 
 END

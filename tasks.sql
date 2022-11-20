@@ -3,14 +3,17 @@ USE bank_system;
 
 
 --firts task ----------------------------------------------
---SELECT DISTINCT bank.name,
---		city.name
---FROM city
---JOIN branch
---	ON branch.city_id = city.id
---JOIN bank
---	ON bank.id = branch.bank_id
---WHERE city.name = 'minsk';
+WITH temp (bank_name, city_name) AS 
+(SELECT  bank.name,
+		city.name
+FROM city
+JOIN branch
+	ON branch.city_id = city.id
+JOIN bank
+	ON bank.id = branch.bank_id
+WHERE city.name = 'minsk')
+SELECT DISTINCT * 
+FROM temp;
 
 
 
@@ -52,17 +55,17 @@ WITH t (card_id, soc_id, soc_name) AS
 	(SELECT card.id AS card_id,
 		 social_status.id AS soc_id ,
 		 social_status.name AS soc_name
-	FROM card
-	JOIN account
-		ON account.id = card.account_id
-	JOIN client
-		ON client.id = account.client_id
-	JOIN social_status
-		ON social_status.id = client.soc_status_id )
+	FROM social_status
+	LEFT JOIN client
+		ON client.soc_status_id = social_status.id
+	LEFT JOIN account
+		ON account.client_id = client.id
+	LEFT JOIN card
+		ON card.account_id = account.id )
 SELECT t.soc_name,
-		 COUNT(soc_name) AS c
+		 COUNT(card_id) AS c
 FROM t
-GROUP BY  soc_name
+GROUP BY soc_name
 
 
 --fourth task
